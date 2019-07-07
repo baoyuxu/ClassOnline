@@ -15,7 +15,7 @@ class CourseListView(View):
     def get(self, request):
         all_courses = Course.objects.all().order_by('-add_time')
         # 热门课程推荐
-        hot_courses = Course.objects.all().order_by('-click_nums')[:3]
+        hot_courses = Course.objects.all().order_by('-click_nums')[:2]
         # 搜索功能
         search_keywords = request.GET.get('keywords', '')
         if search_keywords:
@@ -71,7 +71,7 @@ class CourseDetailView(View):
         tag = course.tag
         if tag:
             # 需要从1开始不然会推荐自己
-            relate_courses = Course.objects.filter(tag=tag)[:2]
+            relate_courses = Course.objects.filter(tag=tag)[:1]
         else:
             relate_courses = []
         return  render(request, "course/course-detail.html", {
@@ -106,7 +106,7 @@ class CourseInfoView(LoginRequiredMixin,View):
         # 取出所有课程id
         course_ids = [all_user_course.course_id for all_user_course in all_user_courses]
         # 通过所有课程的id,找到所有的课程，按点击量去五个
-        relate_courses = Course.objects.filter(id__in=course_ids).order_by("-click_nums")[:5]
+        relate_courses = Course.objects.filter(id__in=course_ids).order_by("-click_nums")[:1]
 
         # 资源
         all_resources = CourseResource.objects.filter(course=course)
