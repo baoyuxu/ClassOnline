@@ -48,12 +48,12 @@ class CourseListView(View):
 class CourseDetailView(View):
     '''课程详情'''
     def get(self, request, course_id):
-        print(course_id)
+        # print(course_id)
         course = Course.objects.get(id=int(course_id))
         # 课程的点击数加1
         course.click_nums += 1
-        print( course.course_org.id )
-        print( course.course_org.students )
+        # print( course.course_org.id )
+        # print( course.course_org.students )
         course.course_org.students += 1
         course.course_org.save()
         course.save()
@@ -98,7 +98,7 @@ class CourseInfoView(LoginRequiredMixin,View):
         #相关课程推荐
         # 找到学习这门课的所有用户
         user_courses = course.usercourse_set.filter(user_profile=request.user)
-        print(user_courses)
+        # print(user_courses)
         # 找到学习这门课的所有用户的id
         user_ids = [user_course.user_profile.id for user_course in user_courses]
         # 通过所有用户的id,找到所有用户学习过的所有过程
@@ -110,7 +110,7 @@ class CourseInfoView(LoginRequiredMixin,View):
 
         # 资源
         all_resources = CourseResource.objects.filter(course=course)
-        print(course)
+        # print(course)
         return render(request,'course/course-video.html',{
             'course':course,
             'all_resources':all_resources,
@@ -188,10 +188,11 @@ class VideoPlayView(LoginRequiredMixin, View):
         # 资源
         all_resources = CourseResource.objects.filter(course=course)
         if video.name[0:4] == 'test':
-           print('video.name'+'作业')
+           # print('video.name'+'作业')
            return redirect(video.url)
         else:
-            print('video.name' + '视频')
+            pass
+            # print('video.name' + '视频')
         return render(request,'course/course-play.html',{
             'course':course,
             'all_resources':all_resources,
