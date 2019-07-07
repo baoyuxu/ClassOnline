@@ -19,7 +19,7 @@ class Course(models.Model):
     learn_time = models.IntegerField("时长", default=0)
     students = models.IntegerField("学习人数", default=0)
     favourite_count = models.IntegerField("收藏人数", default=0)
-    click_count = models.IntegerField("点击次数", default=0)
+    click_nums = models.IntegerField("点击次数", default=0)
     is_banner = models.BooleanField("是否轮播", default=False)
     add_time = models.DateTimeField("", default=datetime.now)
     course_org = models.ForeignKey(Organization, on_delete=models.CASCADE, verbose_name="所属机构", null=True, blank=True)
@@ -28,6 +28,7 @@ class Course(models.Model):
     you_need_know = models.CharField("课程须知",max_length=300,default="")
     teacher_tell = models.CharField("老师告诉你",max_length=300,default="")
     image = models.ImageField("封面图",upload_to=course_image_upload_path,max_length=100, default="image/default.png")
+    tag = models.CharField('课程标签',default='',max_length=10)
 
     class Meta:
         verbose_name = "课程"
