@@ -205,13 +205,13 @@ class UserinfoView(LoginRequiredMixin, View):
 
     def post(self, request):
         user_info_form = UserInfoForm(request.POST, instance=request.user)
-        print(user_info_form)
+        # print(user_info_form)
         if user_info_form.is_valid():
-            print("success")
+            # print("success")
             user_info_form.save()
             return HttpResponse('{"status":"success"}', content_type='application/json')
         else:
-            print("failed")
+            # print("failed")
             return HttpResponse(json.dumps(user_info_form.errors), content_type='application/json')
 
 

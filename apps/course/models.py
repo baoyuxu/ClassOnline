@@ -18,7 +18,7 @@ class Course(models.Model):
     rank = models.CharField("课程等级", choices=rank_choices, max_length=2)
     learn_time = models.IntegerField("时长", default=0)
     students = models.IntegerField("学习人数", default=0)
-    favourite_count = models.IntegerField("收藏人数", default=0)
+    fav_nums = models.IntegerField("收藏人数", default=0)
     click_nums = models.IntegerField("点击次数", default=0)
     is_banner = models.BooleanField("是否轮播", default=False)
     add_time = models.DateTimeField("", default=datetime.now)

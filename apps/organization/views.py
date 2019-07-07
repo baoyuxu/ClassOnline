@@ -13,6 +13,7 @@ from apps.user.models import FavouriteTeacher, FavouriteOrganization, FavouriteC
 from django.contrib.auth import authenticate
 from django.db.models import Q
 from django.conf import settings
+from datetime import datetime
 
 class OrgView(View):
     '''课程机构'''
@@ -196,52 +197,54 @@ class AddFavView(View):
             # 未登录时返回json提示未登录，跳转到登录页面是在ajax中做的
             return HttpResponse('{"status":"fail", "msg":"用户未登录"}', content_type='application/json')
 
-        exist_record = UserFavorite.objects.filter(user=request.user, fav_id=int(id), fav_type=int(type))
-        if exist_record:
-            # 如果记录已经存在，表示用户取消收藏
-            exist_record.delete()
-            if int(type) == 1:
-                course = Course.objects.get(id=int(id))
+        if int(type) == 1:
+            course = Course.objects.get(id=id)
+            exist_record = FavouriteCourse.objects.filter(user_profile=request.user, course=course)
+            print(course)
+            print(1)
+            print(exist_record)
+            if exist_record:
                 course.fav_nums -= 1
-                if course.fav_nums < 0:
-                    course.fav_nums = 0
                 course.save()
-            elif int(type) == 2:
-                org = CourseOrg.objects.get(id=int(id))
-                org.fav_nums -= 1
-                if org.fav_nums < 0:
-                    org.fav_nums = 0
-                org.save()
-            elif int(type) == 3:
-                teacher = Teacher.objects.get(id=int(id))
-                teacher.fav_nums -= 1
-                if teacher.fav_nums < 0:
-                    teacher.fav_nums = 0
-                teacher.save()
-            return HttpResponse('{"status":"success", "msg":"收藏"}', content_type='application/json')
-        else:
-            user_fav = UserFavorite()
-            if int(type) > 0 and int(id) > 0:
-                user_fav.fav_id = int(id)
-                user_fav.fav_type = int(type)
-                user_fav.user = request.user
-                user_fav.save()
-
-                if int(type) == 1:
-                    course = Course.objects.get(id=int(id))
-                    course.fav_nums += 1
-                    course.save()
-                elif int(type) == 2:
-                    org = CourseOrg.objects.get(id=int(id))
-                    org.fav_nums += 1
-                    org.save()
-                elif int(type) == 3:
-                    teacher = Teacher.objects.get(id=int(id))
-                    teacher.fav_nums += 1
-                    teacher.save()
-                return HttpResponse('{"status":"success", "msg":"已收藏"}', content_type='application/json')
+                exist_record.delete()
+                return HttpResponse('{"status":"success", "msg":"收藏"}', content_type='application/json')
             else:
-                return HttpResponse('{"status":"fail", "msg":"收藏出错"}', content_type='application/json')
+                FavouriteCourse(user_profile=request.user, course=course, add_time=datetime.now()).save()
+                course.fav_nums += 1
+                course.save()
+                return HttpResponse('{"status":"success", "msg":"已收藏"}', content_type='application/json')
+        elif int(type) == 2:
+            org = Organization.objects.get(id=id)
+            exist_record = FavouriteOrganization.objects.filter(user_profile=request.user, organization=org)
+            print(2)
+            print(exist_record)
+            if exist_record:
+                org.fav_nums -= 1
+                org.save()
+                exist_record.delete()
+                return HttpResponse('{"status":"success", "msg":"收藏"}', content_type='application/json')
+            else:
+                FavouriteOrganization(user_profile=request.user, organization=org, add_time=datetime.now()).save()
+                org.fav_nums += 1
+                org.save()
+                return HttpResponse('{"status":"success", "msg":"已收藏"}', content_type='application/json')
+        elif int(type) == 3:
+            teacher = Teacher.objects.get(id=id)
+            exist_record = FavouriteTeacher.objects.filter(user_profile=request.user, teacher_id=id)
+            print(3)
+            print(exist_record)
+            if exist_record:
+                teacher.fav_nums -= 1
+                teacher.save()
+                exist_record.delete()
+                return HttpResponse('{"status":"success", "msg":"收藏"}', content_type='application/json')
+            else:
+                FavouriteTeacher(user_profile=request.user, teacher=teacher, add_time=datetime.now()).save()
+                teacher.fav_nums += 1
+                teacher.save()
+                return HttpResponse('{"status":"success", "msg":"已收藏"}', content_type='application/json')
+
+        return HttpResponse('{"status":"fail", "msg":"收藏出错"}', content_type='application/json')
 
 
 # 讲师列表
@@ -297,7 +300,7 @@ class TeacherDetailView(LoginRequiredMixin,View):
             has_org_faved = True
         # 讲师排行榜
         sorted_teacher = Teacher.objects.all().order_by('-click_nums')[:3]
-        print(teacher.image)
+        # print(teacher.image)
         return render(request,'teacher/teacher-detail.html',{
             'teacher':teacher,
             'all_course':all_course,
