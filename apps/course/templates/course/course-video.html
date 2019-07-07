@@ -62,8 +62,6 @@
             <div class="content">
                 <div class="mod-tab-menu">
 
-                    <iframe src="//player.bilibili.com/player.html?aid=40073907&cid=70380167&page=1" style="width:700px;height:500px"></iframe>
-
                     <ul class="course-menu clearfix">
                         <li><a class="ui-tabs-active active" id="learnOn"  href="{% url 'course:course_info' course.id %}"><span>章节</span></a></li>
                         <li><a id="commentOn" class="" href="{% url 'course:course_comments' course.id %}"><span>评论</span></a></li>
@@ -80,9 +78,9 @@
                             <strong><i class="state-expand"></i>{{ lesson.name }}</strong>
                         </h3>
                         <ul class="video">
-                            {% for vedio in lesson.get_lesson_vedio %}
+                            {% for video in lesson.get_lesson_video %}
                             <li>
-                                <a target="_blank" href='{% url 'course:video_play' vedio.id %}' class="J-media-item studyvideo">{{ vedio.name }}
+                                <a target="_blank" href='{% url 'course:video_play' video.id %}' class="J-media-item studyvideo">{{ video.name }}
                                     <i class="study-state"></i>
                                 </a>
                             </li>

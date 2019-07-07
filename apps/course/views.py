@@ -90,17 +90,18 @@ class CourseInfoView(LoginRequiredMixin,View):
         course.save()
         # CourseOrg.objects.get(id=int(course_id))
         # 查询用户是否已经学习了该课程
-        user_courses = request.user.UserCourse.objects.filter(course=course)
+        user_courses = request.user.course.filter(user_course__course=course)
         if not user_courses:
             # 如果没有学习该门课程就关联起来
-            request.user.UserCourse.add(course)
-            request.user.UserCourse.save()
+            request.user.course.add(course)
+            #request.user.course.save() DIFF
 
         #相关课程推荐
         # 找到学习这门课的所有用户
-        user_courses = course.usercourse_set
+        user_courses = course.usercourse_set.filter(user_profile=request.user)
+        print(user_courses)
         # 找到学习这门课的所有用户的id
-        user_ids = [user_course.user_id for user_course in user_courses]
+        user_ids = [user_course.user_profile.id for user_course in user_courses]
         # 通过所有用户的id,找到所有用户学习过的所有过程
         all_user_courses = UserCourse.objects.filter(user_profile__id__in=user_ids)
         # 取出所有课程id
@@ -110,7 +111,8 @@ class CourseInfoView(LoginRequiredMixin,View):
 
         # 资源
         all_resources = CourseResource.objects.filter(course=course)
-        return render(request,'course-video.html',{
+        print(course)
+        return render(request,'course/course-video.html',{
             'course':course,
             'all_resources':all_resources,
             'relate_courses':relate_courses,
@@ -122,8 +124,8 @@ class CommentsView(LoginRequiredMixin,View):
     def get(self, request, course_id):
         course = Course.objects.get(id=int(course_id))
         all_resources = CourseResource.objects.filter(course=course)
-        all_comments = course.usercomment_set
-        return render(request, "course-comment.html", {
+        all_comments = course.usercomment_set.all()
+        return render(request, "course/course-comment.html", {
             "course": course,
             "all_resources": all_resources,
             'all_comments':all_comments,
@@ -166,7 +168,7 @@ class VideoPlayView(LoginRequiredMixin, View):
         course.save()
 
         # 查询用户是否已经学习了该课程
-        user_courses = UserCourse.objects.filter(user=request.user,course=course)
+        user_courses = request.user.course.filter(usercourse__course=course)
         if not user_courses:
             # 如果没有学习该门课程就关联起来
             user_course = UserCourse(user=request.user,course=course)
@@ -176,9 +178,9 @@ class VideoPlayView(LoginRequiredMixin, View):
         # 找到学习这门课的所有用户
         user_courses = UserCourse.objects.filter(course=course)
         # 找到学习这门课的所有用户的id
-        user_ids = [user_course.user_id for user_course in user_courses]
+        user_ids = [user_course.user_profile.id for user_course in user_courses]
         # 通过所有用户的id,找到所有用户学习过的所有过程
-        all_user_courses = UserCourse.objects.filter(user_id__in=user_ids)
+        all_user_courses = UserCourse.objects.filter(user_profile__id__in=user_ids)
         # 取出所有课程id
         course_ids = [all_user_course.course_id for all_user_course in all_user_courses]
         # 通过所有课程的id,找到所有的课程，按点击量去五个
@@ -191,7 +193,7 @@ class VideoPlayView(LoginRequiredMixin, View):
            return redirect(video.url)
         else:
             print('video.name' + '视频')
-        return render(request,'course-play.html',{
+        return render(request,'course/course-play.html',{
             'course':course,
             'all_resources':all_resources,
             'relate_courses':relate_courses,
