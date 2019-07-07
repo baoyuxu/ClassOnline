@@ -36,9 +36,10 @@ class Course(models.Model):
 
     def get_course_lesson(self):
         return self.lesson_set.all()
-    def get_chapter_count(self):
+    def get_lesson_count(self):
         return self.lesson_set.all().count()
-
+    def get_learn_users(self):
+        return self.usercourse_set.all()
 
 
 class Lesson(models.Model):
