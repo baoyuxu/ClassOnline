@@ -54,7 +54,7 @@ class Lesson(models.Model):
 
 
 class Video(models.Model):
-    chapter = models.ForeignKey(Lesson, verbose_name="章节名", on_delete=models.CASCADE)
+    lesson = models.ForeignKey(Lesson, verbose_name="章节名", on_delete=models.CASCADE)
     name  = models.CharField("视频名", max_length=50, default="")
     url = models.CharField("视频地址", max_length=200, default="")
     learn_time = models.IntegerField("时长", default=0)
