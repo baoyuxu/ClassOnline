@@ -126,3 +126,4 @@ dmypy.json
 __pycache__/
 media/
 .idea/
+migrations/
