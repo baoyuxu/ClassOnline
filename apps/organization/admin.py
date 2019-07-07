@@ -18,7 +18,7 @@ class OrganizationAdmin(admin.ModelAdmin):
 class TeacherAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {"fields":[
-            "org", "name", "work_years", "work_company", "work_position",
+            "org", "name", "image", "work_years", "work_company", "work_position",
             "points", "click_nums", "fav_nums", "teacher_age", "add_time"
         ]}),
     )

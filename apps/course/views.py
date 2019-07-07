@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from apps.utils.mixin_utils import LoginRequiredMixin
 from django.db.models import Q
 from apps.user.models import UserProfile, UserCourse, UserComment
-
+from datetime import datetime
 
 class CourseListView(View):
     '''课程列表'''
@@ -93,8 +93,7 @@ class CourseInfoView(LoginRequiredMixin,View):
         user_courses = request.user.course.filter(user_course__course=course)
         if not user_courses:
             # 如果没有学习该门课程就关联起来
-            request.user.course.add(course)
-            #request.user.course.save() DIFF
+            UserCourse(user_profile=request.user, course=course, add_time=datetime.now()).save()
 
         #相关课程推荐
         # 找到学习这门课的所有用户
