@@ -3,6 +3,8 @@ from froala_editor.fields import FroalaField
 from datetime import datetime
 from apps.organization.models import Teacher, Organization
 
+def course_image_upload_path(instance, filename):
+    return "course_{0}/image/{1}".format(instance.id, filename)
 class Course(models.Model):
     rank_choices = (
         ("cj", "初级"),
@@ -25,17 +27,18 @@ class Course(models.Model):
     teacher = models.ForeignKey(Teacher,verbose_name='讲师',null=True,blank=True,on_delete=models.CASCADE)
     you_need_know = models.CharField("课程须知",max_length=300,default="")
     teacher_tell = models.CharField("老师告诉你",max_length=300,default="")
+    image = models.ImageField("封面图",upload_to=course_image_upload_path,max_length=100, default="image/default.png")
 
     class Meta:
         verbose_name = "课程"
         verbose_name_plural = verbose_name
 
     def get_chapter_count(self):
-        return self.get_chapter_count()
+        return self.lesson_set.all().count()
 
 
 
-class Chapter(models.Model):
+class Lesson(models.Model):
     course = models.ForeignKey(Course,verbose_name="课程", on_delete=models.CASCADE)
     name = models.CharField("章节名", max_length=50)
     add_time = models.DateTimeField("添加时间", default=datetime.now)
@@ -50,7 +53,7 @@ class Chapter(models.Model):
 
 
 class Video(models.Model):
-    chapter = models.ForeignKey(Chapter, verbose_name="章节名", on_delete=models.CASCADE)
+    chapter = models.ForeignKey(Lesson, verbose_name="章节名", on_delete=models.CASCADE)
     name  = models.CharField("视频名", max_length=50, default="")
     url = models.CharField("视频地址", max_length=200, default="")
     learn_time = models.IntegerField("时长", default=0)
