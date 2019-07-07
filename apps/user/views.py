@@ -205,11 +205,7 @@ class UserinfoView(LoginRequiredMixin, View):
 
     def post(self, request):
         user_info_form = UserInfoForm(request.POST, instance=request.user)
-        print(request.user.nick_name)
-        print(request.user.gender)
-        print(request.user.birthday)
-        print(request.user.address)
-        print(request.user.mobile)
+        print(user_info_form)
         if user_info_form.is_valid():
             print("success")
             user_info_form.save()
@@ -227,7 +223,7 @@ class UploadImageView(LoginRequiredMixin, View):
         # 上传的文件都在request.FILES里面获取，所以这里要多传一个这个参数
         image_form = UploadImageForm(request.POST, request.FILES)
         if image_form.is_valid():
-            image = image_form.cleaned_data['profile_photo']
+            image = image_form.cleaned_data['image']
             request.user.image = image
             request.user.save()
             return HttpResponse('{"status":"success"}', content_type='application/json')
