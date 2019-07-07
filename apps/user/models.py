@@ -31,6 +31,9 @@ class UserProfile(AbstractUser):
 
     comments = models.ManyToManyField(Course, through="UserComment", related_name="user_comment")
 
+    test_field = models.DateTimeField("test_field", default=datetime.now)
+    test_field2 = models.DateTimeField("test_field", default=datetime.now)
+
     def __str__(self):
         return self.username
 

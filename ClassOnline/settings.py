@@ -91,9 +91,9 @@ WSGI_APPLICATION = 'ClassOnline.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django2',        #数据库名字
+        'NAME': 'class_online',        #数据库名字
         'USER': 'root',          #账号
-        'PASSWORD': '123',      #密码
+        'PASSWORD': 'xubaoyu123',      #密码
         'HOST': '127.0.0.1',    #IP
         'PORT': '3306',                   #端口
     }
